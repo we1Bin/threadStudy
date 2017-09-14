@@ -1,0 +1,12 @@
+1. 非线程安全存在于实例变量中，如果是方法内部的私有变量，则不存在非线程安全为题，所得的结果也就是线程安全了。方法中的变量不存在非线程安全问题，永远都是线程安全的，这是方法内部的变量是私有的特性造成的。
+2. 关键字synchronized取得的锁都是对象锁，而不是把一段代码或者方法(函数)当做锁，哪个线程先执行带synchronized关键字的方法，哪个线程就持有该方法所属对象的锁Lock，其他线程只能呈等待状态，如果多个线程访问多个对象，则JVM会创建多个锁。只有共享资源的读写访问才需要同步化，如果不是共享资源，那么根本没有同步的必要。
+3. 在使用synchronized时，当得到一个对象锁后，再次请求此对象锁时是可以再次得到该对象的锁的。这证明在一个synchronized方法/块的内部调用本类的其他synchronized方法/块时，是永远可以得到锁的。即可重入锁：自己可以再次获取自己的内部锁。
+4. 当一个线程执行的代码出现异常时，其所持有的锁会自动释放。
+5. 同步不具有继承性。
+6. 多个线程调用同一个对象中的不同名称的synchronized同步方法或者synchronized(this)同步代码块时，调用的效果就是按顺序执行，也就是同步的，阻塞的。这说明synchronized同步方法或者synchronized(this)同步代码块分别有两种作用。(1) synchronized同步方法：1）对其他synchronized同步方法或者synchronized(this)同步代码块调用呈阻塞状态。2）同一时间只有一个线程可以执行synchronized同步方法中的代码。（2）synchronized(this)同步代码块:1）起其他synchronized同步方法或者synchronized(this)同步代码块调用呈阻塞状态，2）同一时间只有一个线程可以执行synchronized(this)同步方法中的代码。锁非this对象(synchronized(非this对象x))具有一定的有点：如果在一个类中有多个synchronized方法，虽然能实现同步但会受到阻塞，会影响运行效率；但是若使用同步代码块锁非this对象，则synchronized(非this)代码块中的程序与通过不方法是异步的，不与其他锁this争抢this锁，则可大大提高运行效率。
+7. synchronized可应用在static静态方法上，如果这样写，那是对当前的*.java文件对应的Class类进行持有锁，Class锁可以对类的所有对象实例起作用。synchronized应用到非static静态方法上是给对象上锁。synchronized(class)的作用与synchronized static方法的作用一样。
+8. synchronized代码块都不能使用String作为锁对象，因为String的常量池缓存功能会导致线程会持有相同的锁，会造成某个线程不能执行。
+9. 多线程的死锁：不同的线程在等待根本不可能被释放的锁，从而导致所有的任务都无法继续完成。
+10. 将任何数据类型作为同步锁时。需注意是否有多个线程同事持有锁对象，若同时持有相同的锁对象，则这些线程之间就是同步的；若分别获得锁对象，则这些线程之间就是异步的。
+11. Volatile关键字：主要作用是使得变量在多个线程之间可见。强制从公共堆栈中取得变量的值，而不是从线程私有数据栈中取得变量的值。Volatile不支持原子性。
+12. synchronized和volatile的比较：1）Volatile是线程同步的轻量级实现，所有Volatile性能肯定比synchronized要好，并且Volatile只能修饰于变量，而synchronized可以修饰方法、代码块。synchronized在执行效率上有优势。2）多线程访问Volatile不会发生阻塞，而synchronized会出现阻塞。3）Volatile能保证数据的可见性，但不能保证原子性；synchronized可以保证原子性，也可以间接的保证可见性，因为它会将私有内存和工友内存中的数据做同步。4）Volatile解决的是变量在多个线程直线的可见性；而synchronized解决的是多个线程之间访问资源的同步性。（线程的安全包含原子性可可见性两个方面）。
